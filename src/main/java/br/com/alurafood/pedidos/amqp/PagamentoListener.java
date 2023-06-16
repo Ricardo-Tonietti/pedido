@@ -9,9 +9,9 @@ import org.springframework.stereotype.Component;
 public class PagamentoListener {
 
     @RabbitListener(queues = "pagamentos.detalhe-pedido")
-    public void recebeMensagem(final PagamentoDto pagamento){
+    public void recebeMensagem(PagamentoDto pagamento){
 
-        final String mensagem = """
+        String mensagem = """
                 Nome: %s
                 Dados do pagamento: %s
                 Número do pedido: %s

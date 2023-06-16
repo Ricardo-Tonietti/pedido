@@ -20,9 +20,9 @@ public class PedidoAMQPConfiguration {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory,
-                                         final Jackson2JsonMessageConverter messageConverter){
-        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory,
+                                         Jackson2JsonMessageConverter messageConverter){
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(messageConverter);
         return  rabbitTemplate;
     }
@@ -42,19 +42,19 @@ public class PedidoAMQPConfiguration {
     }
 
     @Bean
-    public Binding bindingPagamentoPedido(final FanoutExchange fanoutExchange){
+    public Binding bindingPagamentoPedido(FanoutExchange fanoutExchange){
         return BindingBuilder
-                .bind(this.filaDetalhePedido())
+                .bind(filaDetalhePedido())
                 .to(fanoutExchange);
     }
 
     @Bean
-    public RabbitAdmin criaRabbitAdmin(final ConnectionFactory conn){
+    public RabbitAdmin criaRabbitAdmin(ConnectionFactory conn){
         return new RabbitAdmin(conn);
     }
 
     @Bean
-    public ApplicationListener<ApplicationReadyEvent> inicializaAdmin(final RabbitAdmin rabbitAdmin){
+    public ApplicationListener<ApplicationReadyEvent> inicializaAdmin(RabbitAdmin rabbitAdmin){
         return event -> rabbitAdmin.initialize();
     }
 }

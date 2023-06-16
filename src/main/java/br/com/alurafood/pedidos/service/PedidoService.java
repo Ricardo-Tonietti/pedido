@@ -27,51 +27,51 @@ public class PedidoService {
 
 
     public List<PedidoDto> obterTodos() {
-        return this.repository.findAll().stream()
-                .map(p -> this.modelMapper.map(p, PedidoDto.class))
+        return repository.findAll().stream()
+                .map(p -> modelMapper.map(p, PedidoDto.class))
                 .collect(Collectors.toList());
     }
 
-    public PedidoDto obterPorId(final Long id) {
-        final Pedido pedido = this.repository.findById(id)
+    public PedidoDto obterPorId(Long id) {
+        Pedido pedido = repository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        return this.modelMapper.map(pedido, PedidoDto.class);
+        return modelMapper.map(pedido, PedidoDto.class);
     }
 
-    public PedidoDto criarPedido(final PedidoDto dto) {
-        final Pedido pedido = this.modelMapper.map(dto, Pedido.class);
+    public PedidoDto criarPedido(PedidoDto dto) {
+        Pedido pedido = modelMapper.map(dto, Pedido.class);
 
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(Status.REALIZADO);
         pedido.getItens().forEach(item -> item.setPedido(pedido));
-        final Pedido salvo = this.repository.save(pedido);
+        Pedido salvo = repository.save(pedido);
 
-        return this.modelMapper.map(pedido, PedidoDto.class);
+        return modelMapper.map(pedido, PedidoDto.class);
     }
 
-    public PedidoDto atualizaStatus(final Long id, final StatusDto dto) {
+    public PedidoDto atualizaStatus(Long id, StatusDto dto) {
 
-        final Pedido pedido = this.repository.porIdComItens(id);
+        Pedido pedido = repository.porIdComItens(id);
 
         if (null == pedido) {
             throw new EntityNotFoundException();
         }
 
         pedido.setStatus(dto.getStatus());
-        this.repository.atualizaStatus(dto.getStatus(), pedido);
-        return this.modelMapper.map(pedido, PedidoDto.class);
+        repository.atualizaStatus(dto.getStatus(), pedido);
+        return modelMapper.map(pedido, PedidoDto.class);
     }
 
-    public void aprovaPagamentoPedido(final Long id) {
+    public void aprovaPagamentoPedido(Long id) {
 
-        final Pedido pedido = this.repository.porIdComItens(id);
+        Pedido pedido = repository.porIdComItens(id);
 
         if (null == pedido) {
             throw new EntityNotFoundException();
         }
 
         pedido.setStatus(Status.PAGO);
-        this.repository.atualizaStatus(Status.PAGO, pedido);
+        repository.atualizaStatus(Status.PAGO, pedido);
     }
 }
